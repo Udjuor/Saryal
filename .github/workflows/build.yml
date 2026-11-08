@@ -40,7 +40,13 @@ jobs:
         shell: pwsh
         run: |
           $setup = (Get-ChildItem dist/Kerdiis-School-Setup-*.exe).FullName
-          $p = Start-Process $setup -ArgumentList '/S' -Wait -PassThru
+          # Установка для текущего пользователя явно: без неё NSIS на сервере без рабочего стола иногда падает.
+          foreach ($try in 1..3) {
+            $p = Start-Process $setup -ArgumentList '/S', '/currentuser' -Wait -PassThru
+            Write-Host "Попытка $try, код выхода $($p.ExitCode)"
+            if ($p.ExitCode -eq 0) { break }
+            Start-Sleep -Seconds 5
+          }
           if ($p.ExitCode -ne 0) { throw "Код выхода установщика: $($p.ExitCode)" }
           $exe = Join-Path $env:LOCALAPPDATA 'Programs\kerdiis-school\KerdiisSchool.exe'
           if (-not (Test-Path $exe)) {
