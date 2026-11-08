@@ -1,0 +1,40 @@
+{
+  "name": "kerdiis-school",
+  "productName": "Kerdiis School",
+  "version": "1.0.0",
+  "description": "Посещаемость и опоздания класса за каждый урок и месяц",
+  "author": "Кэрэчээнэ Семёнова",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test",
+    "dist": "electron-builder --win nsis --x64 --publish never"
+  },
+  "devDependencies": {
+    "electron": "38.2.0",
+    "electron-builder": "26.0.12"
+  },
+  "build": {
+    "appId": "ru.saryal.kerdiis.school",
+    "executableName": "KerdiisSchool",
+    "artifactName": "Kerdiis-School-Setup-${version}.${ext}",
+    "directories": { "output": "dist", "buildResources": "build" },
+    "files": ["src/**/*", "package.json"],
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "runAfterFinish": true,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "Kerdiis School",
+      "installerLanguages": ["ru_RU"],
+      "language": "1049"
+    }
+  }
+}

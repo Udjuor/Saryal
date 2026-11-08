@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:">
+  <title>Kerdiis School</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="classname">
+      <span id="class-title" class="hand"></span>
+      <span id="class-teacher" class="muted"></span>
+    </div>
+    <nav class="tabs" aria-label="Разделы">
+      <button type="button" data-view="today">Сегодня</button>
+      <button type="button" data-view="week">Расписание</button>
+      <button type="button" data-view="class">Класс</button>
+      <button type="button" data-view="report">Отчёт</button>
+      <button type="button" data-view="settings">Настройки</button>
+    </nav>
+    <div id="window-buttons" class="windowbuttons" hidden>
+      <button type="button" id="minimize" class="plain" aria-label="Свернуть">–</button>
+      <button type="button" id="quit" class="plain" aria-label="Закрыть программу">×</button>
+    </div>
+  </header>
+  <main id="page" class="page"></main>
+  <dialog id="roll" class="sheet"></dialog>
+  <dialog id="ask" class="small"></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

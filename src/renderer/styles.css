@@ -1,0 +1,420 @@
+/* Тетрадь в клетку: синяя ручка, красные поля и красная ручка учителя.
+   Тёмная тема — школьная доска с мелом. */
+:root {
+  color-scheme: light;
+  --paper: #fbfcf7;
+  --grid: #dfe8f1;
+  --ink: #22324a;
+  --muted: #637087;
+  --pen: #2b4fb0;
+  --pen-soft: #e6ecfa;
+  --red: #c9302a;
+  --margin: #eba39d;
+  --green: #2a7d47;
+  --green-soft: #e3f2e7;
+  --late: #a35a00;
+  --late-soft: #fbecd5;
+  --marker: #ffe784;
+  --card: #ffffff;
+  --line: #cfd8e3;
+  --shadow: 0 1px 0 #d6dee8, 0 6px 18px -12px rgba(34, 50, 74, 0.35);
+  --hand: 'Segoe Print', 'Comic Neue', 'Comic Sans MS', cursive;
+  --text: 'Segoe UI', 'Noto Sans', system-ui, sans-serif;
+  --cell: 22px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --paper: #1e3229;
+    --grid: rgba(236, 242, 230, 0.045);
+    --ink: #eef1e8;
+    --muted: #a8b8ad;
+    --pen: #9ec3ff;
+    --pen-soft: rgba(158, 195, 255, 0.14);
+    --red: #ff958c;
+    --margin: rgba(255, 149, 140, 0.35);
+    --green: #93d9a5;
+    --green-soft: rgba(147, 217, 165, 0.14);
+    --late: #f6c66d;
+    --late-soft: rgba(246, 198, 109, 0.14);
+    --marker: rgba(255, 226, 110, 0.22);
+    --card: #253d32;
+    --line: rgba(236, 242, 230, 0.16);
+    --shadow: 0 0 0 1px rgba(236, 242, 230, 0.07);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --paper: #1e3229;
+  --grid: rgba(236, 242, 230, 0.045);
+  --ink: #eef1e8;
+  --muted: #a8b8ad;
+  --pen: #9ec3ff;
+  --pen-soft: rgba(158, 195, 255, 0.14);
+  --red: #ff958c;
+  --margin: rgba(255, 149, 140, 0.35);
+  --green: #93d9a5;
+  --green-soft: rgba(147, 217, 165, 0.14);
+  --late: #f6c66d;
+  --late-soft: rgba(246, 198, 109, 0.14);
+  --marker: rgba(255, 226, 110, 0.22);
+  --card: #253d32;
+  --line: rgba(236, 242, 230, 0.16);
+  --shadow: 0 0 0 1px rgba(236, 242, 230, 0.07);
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; margin: 0; }
+
+body {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: var(--cell) var(--cell);
+  color: var(--ink);
+  font: 16px/1.45 var(--text);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.hand { font-family: var(--hand); font-weight: 400; letter-spacing: 0.01em; }
+.muted { color: var(--muted); }
+.small { font-size: 0.875rem; }
+.grow { flex: 1; }
+
+h1, h2, h3 { margin: 0 0 0.5rem; line-height: 1.25; }
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.35rem; color: var(--pen); }
+h3 { font-size: 1.05rem; }
+p { margin: 0 0 0.6rem; }
+
+button, input, textarea, select { font: inherit; color: inherit; }
+
+button {
+  border-radius: 10px;
+  border: 1.5px solid var(--line);
+  background: var(--card);
+  padding: 0.5rem 0.95rem;
+  min-height: 44px;
+  cursor: pointer;
+}
+button:hover { border-color: var(--pen); }
+button:disabled { opacity: 0.45; cursor: default; }
+button.primary { background: var(--pen); border-color: var(--pen); color: var(--paper); font-weight: 600; }
+button.danger { background: var(--red); border-color: var(--red); color: var(--paper); font-weight: 600; }
+button.plain { background: transparent; }
+button.plain[aria-pressed='true'] { background: var(--pen-soft); border-color: var(--pen); color: var(--pen); font-weight: 600; }
+button.small { min-height: 34px; padding: 0.25rem 0.7rem; font-size: 0.875rem; }
+button.link { border: 0; background: none; padding: 0; min-height: 0; color: var(--pen); text-decoration: underline; }
+
+:focus-visible { outline: 3px solid var(--pen); outline-offset: 2px; }
+
+input[type='text'], input[type='time'], input[type='date'], input[type='number'], textarea {
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  padding: 0.45rem 0.6rem;
+  min-height: 40px;
+  width: 100%;
+}
+input:focus, textarea:focus { border-color: var(--pen); outline: none; }
+textarea { resize: vertical; }
+
+label { display: grid; gap: 0.25rem; margin-bottom: 0.75rem; font-size: 0.95rem; }
+label.inline { display: inline-flex; align-items: center; gap: 0.5rem; margin: 0; }
+label.inline input[type='time'], label.inline input[type='date'] { width: auto; }
+input[type='checkbox'], input[type='radio'] { width: 20px; height: 20px; accent-color: var(--pen); }
+
+/* Шапка: название класса от руки и вкладки-закладки */
+.top {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.6rem 1.5rem 0;
+  border-bottom: 2px solid var(--pen);
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+}
+.classname { display: grid; min-width: 9rem; padding-bottom: 0.4rem; }
+#class-title { font-size: 1.6rem; color: var(--pen); line-height: 1.1; }
+#class-teacher { font-size: 0.85rem; }
+.tabs { display: flex; gap: 0.35rem; align-self: flex-end; flex-wrap: wrap; }
+.tabs button {
+  border-radius: 12px 12px 0 0;
+  border: 2px solid var(--line);
+  border-bottom: 0;
+  background: var(--card);
+  margin-bottom: -2px;
+  padding: 0.55rem 1.1rem;
+  color: var(--muted);
+}
+.tabs button[aria-current='page'] { border-color: var(--pen); color: var(--pen); font-weight: 600; background: var(--paper); padding-bottom: calc(0.55rem + 2px); }
+.windowbuttons { margin-left: auto; display: flex; gap: 0.4rem; align-self: center; }
+.windowbuttons button { min-width: 48px; font-size: 1.3rem; }
+.windowbuttons[hidden] { display: none; }
+
+.page { flex: 1; overflow: auto; padding: 1.25rem 1.5rem 2rem; }
+
+.card {
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: 1.1rem 1.25rem;
+  box-shadow: var(--shadow);
+}
+.stack { display: grid; gap: 1rem; align-content: start; }
+.twocol { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1rem; align-items: start; }
+.twocol.wide { grid-template-columns: minmax(380px, 3fr) minmax(320px, 2fr); }
+.formrow { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.choices { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; }
+.scrollx { overflow-x: auto; }
+.empty { color: var(--muted); padding: 1.5rem 0; font-size: 1.1rem; }
+.note { background: var(--pen-soft); border-radius: 10px; padding: 0.6rem 0.9rem; }
+.plainlist { list-style: none; margin: 0; padding: 0; }
+.plainlist li { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px dashed var(--line); }
+.plainlist li:last-child { border-bottom: 0; }
+
+/* Сегодня: страница тетради с красными полями */
+.todaygrid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 1.25rem; align-items: start; }
+.sheetpage {
+  position: relative;
+  padding: 0.5rem 0 1rem 4.5rem;
+  min-height: 60vh;
+}
+.sheetpage::before {
+  content: '';
+  position: absolute;
+  left: 3.4rem;
+  top: -1.25rem;
+  bottom: -2rem;
+  border-left: 2px solid var(--margin);
+}
+.daynav { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.daynav h1 { margin: 0; min-width: 16rem; color: var(--ink); }
+.daynav .datepick { width: auto; margin-left: auto; }
+
+.lessons { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: 0.5rem; }
+.lessonbtn {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 2.4rem 7.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.9rem;
+  text-align: left;
+  border: 0;
+  border-bottom: 1.5px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  padding: 0.85rem 0.5rem;
+  min-height: 64px;
+}
+.lessonbtn:hover { background: var(--pen-soft); }
+.lessonbtn .num {
+  margin-left: -4.15rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 2px solid var(--pen);
+  color: var(--pen);
+  background: var(--paper);
+  font-family: var(--hand);
+  font-size: 1.15rem;
+}
+.lessonbtn .time { color: var(--muted); font-variant-numeric: tabular-nums; }
+.lessonbtn .subject { font-size: 1.25rem; font-weight: 600; }
+.lessonbtn .changed { color: var(--red); margin-left: 0.2rem; }
+.lessonbtn .status { display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: flex-end; }
+.state-now .lessonbtn .subjecttext {
+  background: linear-gradient(transparent 52%, var(--marker) 52%, var(--marker) 92%, transparent 92%);
+}
+.state-now .lessonbtn .num { background: var(--pen); color: var(--paper); }
+.state-past .lessonbtn .subject { font-weight: 500; }
+
+.chip { border-radius: 999px; padding: 0.15rem 0.65rem; font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
+.chip.ok { background: var(--green-soft); color: var(--green); }
+.chip.late { background: var(--late-soft); color: var(--late); }
+.chip.miss, .chip.warn { background: transparent; color: var(--red); border: 1.5px solid var(--red); }
+.chip.now { background: var(--marker); color: var(--ink); }
+
+.side { display: grid; gap: 1rem; }
+.petcard { display: grid; grid-template-columns: 112px 1fr; gap: 1rem; align-items: start; }
+.petbox { width: 112px; height: 112px; background: var(--pen-soft); border-radius: 18px; padding: 10px; }
+.petsprite { width: 100%; height: 100%; }
+.petsprite .frame1 { animation: blink 1.6s steps(1) infinite; }
+.petsprite .frame0 { animation: blink 1.6s steps(1) infinite reverse; }
+@keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .petsprite .frame1 { display: none; } .petsprite .frame0 { animation: none; } }
+.petmood { font-weight: 600; }
+.health { height: 10px; border-radius: 6px; background: var(--grid); border: 1px solid var(--line); overflow: hidden; margin-bottom: 0.5rem; }
+.health span { display: block; height: 100%; background: var(--green); }
+.mood-sad + * .health span, .petcard:has(.mood-sad) .health span { background: var(--late); }
+.petcard:has(.mood-sick) .health span { background: var(--red); }
+
+.welcome .steps { margin: 0; padding-left: 1.4rem; display: grid; gap: 0.4rem; }
+.welcome .steps li.done { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--green); }
+
+/* Окна */
+dialog { border: 0; border-radius: 16px; padding: 0; background: var(--paper); color: var(--ink); box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.5); }
+dialog::backdrop { background: rgba(20, 30, 44, 0.45); }
+dialog.small { padding: 1.25rem 1.5rem; width: min(560px, 92vw); }
+dialog.small .actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
+.changegrid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 0.75rem; }
+.changegrid label { grid-template-columns: 4.5rem 1fr; align-items: center; margin-bottom: 0.4rem; }
+
+dialog.sheet {
+  width: min(1240px, 96vw);
+  height: min(900px, 94vh);
+  display: none;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1rem 1.25rem;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: var(--cell) var(--cell);
+}
+dialog.sheet[open] { display: flex; }
+.rolltop { display: flex; justify-content: space-between; align-items: start; gap: 1rem; }
+.rolltop h2 { font-size: 1.6rem; margin: 0; color: var(--pen); }
+.rolltop .close { font-size: 1.6rem; min-width: 52px; }
+.startline, .rolltools { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.rollsummary { margin-left: auto; font-weight: 600; }
+.rule { margin: 0; font-size: 0.85rem; }
+
+.rollgrid {
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem;
+  flex: 1;
+  overflow: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(540px, 1fr));
+  gap: 0.6rem;
+  align-content: start;
+}
+.rollcard {
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-left: 5px solid var(--line);
+  border-radius: 12px;
+  padding: 0.55rem 0.75rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.2rem 0.75rem;
+  align-items: center;
+}
+.rollcard .markrow { grid-column: 1 / -1; }
+.rollcard.code-present { border-left-color: var(--green); }
+.rollcard.code-late { border-left-color: var(--late); }
+.rollcard.code-absent, .rollcard.code-sick, .rollcard.code-excused, .rollcard.code-released { border-left-color: var(--red); }
+.rollhead { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; grid-column: 1 / -1; }
+.rollname { font-weight: 600; font-size: 1.05rem; }
+.stamp { font-family: var(--hand); color: var(--red); font-size: 1.35rem; line-height: 1; min-width: 1.5rem; text-align: right; }
+.code-present .stamp { color: var(--green); }
+.code-late .stamp { color: var(--late); }
+.rolltext { font-size: 0.875rem; color: var(--muted); min-height: 1.3em; }
+.markrow { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.markbtn { min-height: 38px; padding: 0.2rem 0.6rem; font-size: 0.875rem; background: transparent; }
+.markbtn[aria-pressed='true'] { font-weight: 700; color: var(--paper); }
+.markbtn.present[aria-pressed='true'] { background: var(--green); border-color: var(--green); }
+.markbtn.late[aria-pressed='true'] { background: var(--late); border-color: var(--late); }
+.markbtn.sick[aria-pressed='true'], .markbtn.excused[aria-pressed='true'], .markbtn.released[aria-pressed='true'], .markbtn.absent[aria-pressed='true'] { background: var(--red); border-color: var(--red); }
+.latebox input { min-height: 34px; padding: 0.2rem 0.4rem; }
+
+/* Таблицы */
+table.grid { border-collapse: collapse; width: 100%; }
+table.grid th, table.grid td { border: 1px solid var(--line); padding: 0.35rem 0.5rem; text-align: left; vertical-align: middle; }
+table.grid thead th { background: var(--pen-soft); color: var(--pen); font-weight: 600; font-size: 0.9rem; }
+table.grid td.num, table.grid th.num { width: 3rem; text-align: center; font-family: var(--hand); color: var(--pen); }
+table.grid th.num small { display: block; font-family: var(--text); }
+table.grid input { border-color: transparent; background: transparent; min-height: 36px; }
+table.grid input:hover { border-color: var(--line); }
+.weektable td { min-width: 9rem; padding: 0; }
+.weektable td input { border-radius: 0; }
+.bells { width: auto; margin-bottom: 0.75rem; }
+.evenly { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 0.75rem; margin-top: 0.75rem; }
+.evenly button, .evenly p { grid-column: 1 / -1; justify-self: start; }
+details summary { cursor: pointer; color: var(--pen); margin-top: 0.5rem; }
+.daysswitch { display: flex; gap: 1.5rem; margin-bottom: 0.75rem; }
+.holidays li { display: grid; grid-template-columns: 9.5rem auto 9.5rem 1fr auto; justify-content: stretch; }
+
+.students { margin: 0; padding-left: 2.2rem; display: grid; gap: 0.35rem; }
+.students li { padding-left: 0.3rem; }
+.students li::marker { font-family: var(--hand); color: var(--pen); }
+.students li > * { vertical-align: middle; }
+.students li { display: list-item; }
+.students li input[type='text'] { width: calc(100% - 15rem); margin-right: 0.5rem; }
+.students li.left input[type='text'] { color: var(--muted); text-decoration: line-through; }
+.addstudents button { margin-top: 0.5rem; }
+
+.reportbar { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.reportbar h1 { margin: 0; min-width: 11rem; text-align: center; }
+table.report { font-size: 0.9rem; }
+table.report td.n { text-align: center; font-variant-numeric: tabular-nums; }
+table.report tbody th { font-weight: 500; white-space: nowrap; }
+table.report tr.total { font-weight: 700; background: var(--pen-soft); }
+table.bydays td { min-width: 2.2rem; color: var(--red); font-family: var(--hand); }
+table.bydays td:first-child, table.bydays td:last-child { color: var(--ink); font-family: var(--text); }
+.printhead { display: none; }
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translate(-50%, 1rem);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0.7rem 1.2rem;
+  border-radius: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.toast.shown { opacity: 1; transform: translate(-50%, 0); }
+
+@media (max-width: 1100px) {
+  .todaygrid, .twocol.wide { grid-template-columns: 1fr; }
+}
+
+/* Печать отчёта: только таблицы, без тетрадной клетки */
+@media print {
+  @page { size: A4 landscape; margin: 12mm; }
+  body { background: #fff; color: #000; overflow: visible; display: block; }
+  .top, .noprint, .toast, dialog { display: none !important; }
+  .page { overflow: visible; padding: 0; }
+  .printhead { display: block; }
+  .printhead h1 { font-size: 16pt; }
+  .card { border: 0; box-shadow: none; padding: 0; margin-bottom: 8mm; background: #fff; }
+  .card h2 { color: #000; font-family: var(--text); font-size: 13pt; }
+  table.grid th, table.grid td { border-color: #777; color: #000; padding: 2px 4px; }
+  table.grid thead th { background: #eee; color: #000; }
+  table.report { font-size: 8.5pt; }
+  table.bydays td { font-family: var(--text); color: #000; }
+  .scrollx { overflow: visible; }
+}
+
+/* Заставка */
+.splashpage {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  grid-template-rows: 1fr auto;
+  gap: 0 1.6rem;
+  padding: 2rem 2.4rem 1.2rem 4.2rem;
+  height: 100vh;
+  cursor: pointer;
+  position: relative;
+}
+.splashpage::before { content: ''; position: absolute; left: 2.6rem; top: 0; bottom: 0; border-left: 2px solid var(--margin); }
+.splashlogo { align-self: center; width: 170px; height: 170px; }
+.splashtitle { align-self: center; }
+.splashtitle h1 { font-size: 3.6rem; color: var(--pen); margin: 0; line-height: 1; }
+.splashkind { font-family: var(--hand); color: var(--red); font-size: 1.4rem; margin: 0.2rem 0 0.9rem; }
+.splashtag { font-weight: 600; font-size: 1.15rem; }
+.splashtext { color: var(--muted); }
+.splashfoot { grid-column: 1 / -1; display: flex; justify-content: space-between; color: var(--muted); font-size: 0.9rem; }
